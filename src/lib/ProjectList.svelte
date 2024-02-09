@@ -3,7 +3,7 @@
     let studentProjects = []; // Initialiser comme tableau vide
 
     onMount(async () => {
-        const response = await fetch('http://localhost:3000/projects');
+        const response = await fetch('https://bdeapi.ugoroserat.com/projects');
         if (response.ok) {
             let projects = await response.json();
             // Ajuster les URLs des images pour chaque projet
