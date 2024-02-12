@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     let studentProjects = [];
-    let projectOfTheMonth = {};
+    let projectOfTheMonth = null; // Initialisez à null pour vérifier plus tard s'il est défini
 
     onMount(async () => {
         const response = await fetch('https://bdeapi.ugoroserat.com/projects');
@@ -13,7 +13,8 @@
                 }
                 return project;
             });
-            projectOfTheMonth = projects.find(p => p.id === 2);
+            // Trouve le projet du mois par son ID, sinon laisse projectOfTheMonth à null
+            projectOfTheMonth = projects.find(p => p.id === 2) || null;
         } else {
             console.error('Erreur lors de la récupération des projets', response.statusText);
         }
@@ -26,20 +27,22 @@
     </div>
     <div class="projects-container p-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Projet du mois -->
-            <div class="lg:col-span-1 lg:row-span-2 bg-gray-700 shadow-lg rounded-lg overflow-hidden flex flex-col">
-                <div class="text-center py-2 bg-gray-600 text-white font-bold uppercase">Projet du mois</div>
-                <img src={projectOfTheMonth.image} alt={`Image de ${projectOfTheMonth.title}`} class="w-full object-cover" style="height: 300px;"/>
-                <div class="p-4 flex-grow">
-                    <h3 class="text-lg font-semibold">{projectOfTheMonth.title}</h3>
-                    <p>{projectOfTheMonth.description}</p>
+            <!-- Afficher le projet du mois seulement s'il est défini -->
+            {#if projectOfTheMonth}
+                <div class="lg:col-span-1 lg:row-span-2 bg-gray-700 shadow-lg rounded-lg overflow-hidden flex flex-col">
+                    <div class="text-center py-2 bg-gray-600 text-white font-bold uppercase">Projet du mois</div>
+                    <img src={projectOfTheMonth.image} alt={`Image de ${projectOfTheMonth.title}`} class="w-full object-cover" style="height: 300px;"/>
+                    <div class="p-4 flex-grow">
+                        <h3 class="text-lg font-semibold">{projectOfTheMonth.title}</h3>
+                        <p>{projectOfTheMonth.description}</p>
+                    </div>
+                    <div class="p-4 bg-gray-800 flex justify-between items-center">
+                        <p class="text-sm">{projectOfTheMonth.name}<br>{projectOfTheMonth.classname}</p>
+                        <a href={projectOfTheMonth.url} target="_blank"
+                           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Découvrir</a>
+                    </div>
                 </div>
-                <div class="p-4 bg-gray-800 flex justify-between items-center">
-                    <p class="text-sm">{projectOfTheMonth.name}<br>{projectOfTheMonth.classname}</p>
-                    <a href={projectOfTheMonth.url} target="_blank"
-                       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300">Découvrir</a>
-                </div>
-            </div>
+            {/if}
             <!-- Autres projets -->
             {#each studentProjects as project}
                 <div class="project-box bg-gray-700 shadow-lg rounded-lg overflow-hidden">
